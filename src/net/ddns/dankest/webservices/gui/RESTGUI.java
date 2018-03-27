@@ -1,17 +1,16 @@
 package net.ddns.dankest.webservices.gui;
 
-import net.ddns.dankest.webservices.ws.APIRetrieverServiceLocator;
-import net.ddns.dankest.webservices.ws.APIRetriever_PortType;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.xml.rpc.ServiceException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
-public class WSGUI extends JFrame implements ActionListener {
-    APIRetriever_PortType service = new APIRetrieverServiceLocator().getAPIRetriever();
-
+public class RESTGUI extends JFrame implements ActionListener {
     private JLabel fieldLabel = new JLabel("City :");
     private JLabel cityName = new JLabel("Enter a city name");
     private JLabel weatherLabel = new JLabel("Weather :");
@@ -22,13 +21,13 @@ public class WSGUI extends JFrame implements ActionListener {
     private JTextField field = new JTextField("Pontoise");
     private JButton validate = new JButton("OK");
 
-    public WSGUI() throws ServiceException {
+    public RESTGUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.setTitle("APIRetriever SOAP Java Client");
+        this.setTitle("APIRetriever REST Java Client");
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
@@ -56,7 +55,7 @@ public class WSGUI extends JFrame implements ActionListener {
         descriptionArea.setBackground(null);
         this.add(descriptionArea);
 
-        weatherLabel.setBounds(79,273,100,20);
+        weatherLabel.setBounds(79, 273, 100, 20);
         this.add(weatherLabel);
 
         weather.setBounds(160, 273, 200, 20);
@@ -76,7 +75,13 @@ public class WSGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == validate) {
             try {
-                JSONObject json = new JSONObject(service.getResult(field.getText().replaceAll(" ", "%20")));
+                URL url = new URL("http://localhost:8080/net.ddns.dankest.ws.jersey.first/rest/apiretriever?city=" + field.getText());
+                URLConnection con = url.openConnection();
+                InputStream in = con.getInputStream();
+                String encoding = con.getContentEncoding();
+                encoding = encoding == null ? "UTF-8" : encoding;
+                String body = IOUtils.toString(in, encoding);
+                JSONObject json = new JSONObject(body);
                 cityName.setText(json.getString("name"));
                 descriptionArea.setText(json.getString("desc"));
                 temp.setText(json.getString("temp") + " °C");
