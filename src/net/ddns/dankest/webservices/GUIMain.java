@@ -1,5 +1,6 @@
 package net.ddns.dankest.webservices;
 
+import net.ddns.dankest.webservices.gui.BTCEURGUI;
 import net.ddns.dankest.webservices.gui.RESTGUI;
 import net.ddns.dankest.webservices.gui.WSGUI;
 
@@ -10,6 +11,7 @@ public class GUIMain {
         try {
             new WSGUI();
             new RESTGUI();
+            new BTCEURGUI();
         } catch (ServiceException e) {
             e.printStackTrace();
         }
