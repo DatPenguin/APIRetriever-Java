@@ -1,21 +1,25 @@
 package net.ddns.dankest.webservices.gui;
 
+import net.ddns.dankest.webservices.GUIMain;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
 
-public class BTCEURGUI extends JFrame implements ActionListener {
-    private JLabel bigLabel = new JLabel("Bitcoin exchange rate");
-    private JLabel rateLabel = new JLabel();
+public class ImageGUI extends JFrame implements ActionListener {
+    private JLabel bigLabel = new JLabel("City Picture");
+    private JLabel image = new JLabel();
     private JButton refresh = new JButton("Refresh");
 
-    public BTCEURGUI() {
+    public ImageGUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -29,33 +33,31 @@ public class BTCEURGUI extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setLayout(null);
 
-        refresh.setBounds(309, 343, 75, 23);
+        refresh.setBounds(309, 375, 75, 23);
         this.add(refresh);
 
         bigLabel.setFont(bigLabel.getFont().deriveFont(16f));
         bigLabel.setBounds(60, 35, 185, 25);
         this.add(bigLabel);
 
-        rateLabel.setBounds(60, 60, 100, 25);
-        rateLabel.setBackground(null);
-        this.add(rateLabel);
+        image.setBounds(10, 60, this.getWidth() - 30, 300);
+        image.setBackground(null);
+        this.add(image);
 
         SwingUtilities.getRootPane(refresh).setDefaultButton(refresh);
         refresh.addActionListener(this);
-
-        getExchangeRate();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == refresh) {
-            getExchangeRate();
+        if (e.getSource() == refresh && GUIMain.city != null) {
+            getImage();
         }
     }
 
-    public void getExchangeRate() {
+    private void getImage() {
         try {
-            URL url = new URL("https://api.coindesk.com/v1/bpi/currentprice.json");
+            URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=500&titles=" + GUIMain.city);
             URLConnection con = url.openConnection();
             con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             InputStream in = con.getInputStream();
@@ -63,7 +65,16 @@ public class BTCEURGUI extends JFrame implements ActionListener {
             encoding = encoding == null ? "UTF-8" : encoding;
             String body = IOUtils.toString(in, encoding);
             JSONObject json = new JSONObject(body);
-            rateLabel.setText(json.getJSONObject("bpi").getJSONObject("EUR").getString("rate") + " €");
+
+            Iterator keys = json.getJSONObject("query").getJSONObject("pages").keys();
+            String pageID = (String) keys.next();
+
+            String imgUrl = json.getJSONObject("query").getJSONObject("pages").getJSONObject(pageID).getJSONObject("thumbnail").getString("source");
+
+            BufferedImage bi = ImageIO.read(new URL(imgUrl));
+            ImageIcon img = new ImageIcon(bi);
+
+            image.setIcon(img);
         } catch (Exception e1) {
             e1.printStackTrace();
         }

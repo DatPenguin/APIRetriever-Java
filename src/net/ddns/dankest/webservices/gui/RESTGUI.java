@@ -1,5 +1,6 @@
 package net.ddns.dankest.webservices.gui;
 
+import net.ddns.dankest.webservices.GUIMain;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
@@ -86,6 +87,7 @@ public class RESTGUI extends JFrame implements ActionListener {
                 descriptionArea.setText(json.getString("desc"));
                 temp.setText(json.getString("temp") + " °C");
                 weather.setText(json.getString("weather").substring(0, 1).toUpperCase() + json.getString("weather").substring(1));
+                GUIMain.city = field.getText();
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
