@@ -25,7 +25,7 @@ public class ImageGUI extends JFrame implements ActionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.setTitle("Bitcoin Exchange Rate");
+        this.setTitle("City Picture");
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
