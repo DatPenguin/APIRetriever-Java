@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * The GUI displaying the infos retrieved from the RESTful service
+ */
 public class RESTGUI extends JFrame implements ActionListener {
     private JLabel fieldLabel = new JLabel("City :");
     private JLabel cityName = new JLabel("Enter a city name");
@@ -22,6 +25,9 @@ public class RESTGUI extends JFrame implements ActionListener {
     private JTextField field = new JTextField("Pontoise");
     private JButton validate = new JButton("OK");
 
+    /**
+     * Creates the frame and sets up its components
+     */
     public RESTGUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -72,17 +78,29 @@ public class RESTGUI extends JFrame implements ActionListener {
         validate.addActionListener(this);
     }
 
+    /**
+     * Fired when an action is performed on the frame
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == validate) {
+        if (e.getSource() == validate) {    // If we pressed the validation button
             try {
-                URL url = new URL("http://localhost:8080/net.ddns.dankest.ws.jersey.first/rest/apiretriever?city=" + field.getText());
+                URL url = new URL("http://localhost:8080/net.ddns.dankest.ws.jersey.first/rest/apiretriever?city=" + field.getText());  // We create the URL we will query
+                /*
+                 * Once we have the URL, we download the body of the web page and parse it as a JSON Object.
+                 */
                 URLConnection con = url.openConnection();
                 InputStream in = con.getInputStream();
                 String encoding = con.getContentEncoding();
                 encoding = encoding == null ? "UTF-8" : encoding;
                 String body = IOUtils.toString(in, encoding);
                 JSONObject json = new JSONObject(body);
+
+                /*
+                 * We then store the info it contains into variables
+                 */
                 cityName.setText(json.getString("name"));
                 descriptionArea.setText(json.getString("desc"));
                 temp.setText(json.getString("temp") + " °C");

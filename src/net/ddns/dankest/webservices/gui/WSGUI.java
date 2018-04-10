@@ -10,7 +10,13 @@ import javax.xml.rpc.ServiceException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The GUI displaying the infos retrieved from the SOAP service
+ */
 public class WSGUI extends JFrame implements ActionListener {
+    /**
+     * The SOAP Client we generated through IntelliJ. Needed to access data.
+     */
     APIRetriever_PortType service = new APIRetrieverServiceLocator().getAPIRetriever();
 
     private JLabel fieldLabel = new JLabel("City :");
@@ -23,6 +29,11 @@ public class WSGUI extends JFrame implements ActionListener {
     private JTextField field = new JTextField("Pontoise");
     private JButton validate = new JButton("OK");
 
+    /**
+     * Creates the frame and sets up its components
+     *
+     * @throws ServiceException
+     */
     public WSGUI() throws ServiceException {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -73,11 +84,19 @@ public class WSGUI extends JFrame implements ActionListener {
         validate.addActionListener(this);
     }
 
+    /**
+     * Fired when an action is performed on the frame
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == validate) {
             try {
-                JSONObject json = new JSONObject(service.getResult(field.getText().replaceAll(" ", "%20")));
+                JSONObject json = new JSONObject(service.getResult(field.getText().replaceAll(" ", "%20")));    // Directly getting the JSON Object from the service
+
+                /*
+                 * Storing the data into variables
+                 */
                 cityName.setText(json.getString("name"));
                 descriptionArea.setText(json.getString("desc"));
                 temp.setText(json.getString("temp") + " °C");

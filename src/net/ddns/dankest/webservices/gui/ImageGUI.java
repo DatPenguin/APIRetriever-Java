@@ -14,6 +14,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
 
+/**
+ * The Frame that displays the city picture
+ */
 public class ImageGUI extends JFrame implements ActionListener {
     private JLabel bigLabel = new JLabel("City Picture");
     private JLabel image = new JLabel();
@@ -55,8 +58,14 @@ public class ImageGUI extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Downloads the image and displays it
+     */
     private void getImage() {
         try {
+            /*
+             * We get the URL of the image we want by querying the API
+             */
             URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=500&titles=" + GUIMain.city);
             URLConnection con = url.openConnection();
             con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -69,12 +78,12 @@ public class ImageGUI extends JFrame implements ActionListener {
             Iterator keys = json.getJSONObject("query").getJSONObject("pages").keys();
             String pageID = (String) keys.next();
 
-            String imgUrl = json.getJSONObject("query").getJSONObject("pages").getJSONObject(pageID).getJSONObject("thumbnail").getString("source");
+            String imgUrl = json.getJSONObject("query").getJSONObject("pages").getJSONObject(pageID).getJSONObject("thumbnail").getString("source");    // Parsing the API to get the URL
 
-            BufferedImage bi = ImageIO.read(new URL(imgUrl));
-            ImageIcon img = new ImageIcon(bi);
+            BufferedImage bi = ImageIO.read(new URL(imgUrl));   // Once we get the Image URL, we read it with a BufferedReader
+            ImageIcon img = new ImageIcon(bi);                  // We finally display the image by creating an icon from it...
 
-            image.setIcon(img);
+            image.setIcon(img);                                 // And setting it as a label icon
         } catch (Exception e1) {
             e1.printStackTrace();
         }

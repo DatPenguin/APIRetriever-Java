@@ -8,8 +8,16 @@ import javax.xml.rpc.ServiceException;
 
 public class GUIMain {
 
+    /**
+     * Used to get the Picture of the last city we looked for
+     */
     public static String city = "Pontoise";
 
+    /**
+     * Tries to run the three frames. Each one of them shows information obtained by different means.
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             new WSGUI();
